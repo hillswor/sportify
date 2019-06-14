@@ -53,7 +53,7 @@ class Sportify::CLI
       active_roster_display(team)
       team_menu(team)
     when 2
-      Sportify.new
+      Sportify::CLI.new
     when 3
       puts "Goodbye"
     else
