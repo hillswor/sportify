@@ -32,15 +32,13 @@ class Sportify::MLBscraper
   end
 
   def roster_doc(team)
-    url = roster_url(team[:team_url])
-    html = open(url)
+    html = open(team[:team_url])
     Nokogiri::HTML(html)
   end
 
   def player_numbers(team)
     player_numbers = []
-    doc = roster_doc(team)
-    doc.css("table.data.roster_table").css("td.dg-jersey_number").each do |player|
+    roster_doc(team).css("table.data.roster_table").css("td.dg-jersey_number").each do |player|
       player_numbers << player.text
     end
     player_numbers
@@ -48,11 +46,48 @@ class Sportify::MLBscraper
 
   def player_names(team)
     player_names = []
-    doc = roster_doc(team)
-    doc.css("td.dg-name_display_first_last").css("a").each do |player|
+    roster_doc(team).css("td.dg-name_display_first_last").css("a").each do |player|
       player_names << player.text
     end
     player_names
+  end
+
+  def player_urls(team)
+    player_urls = []
+    team_url = team[:team_url]
+    roster_doc(team).css("td.dg-name_display_first_last").css("a").each do |player|
+      player_urls << team_url + player["href"]
+    end
+    player_urls
+  end
+
+  def player_doc(player)
+    html = open(player[:player_url])
+    Nokogiri::HTML(html)
+  end
+
+  def name(player)
+    player_doc(player).css("span.player-header--vitals-name").text
+  end
+
+  def number(player)
+    player_doc(player).css("span.player-header--vitals-number").text
+  end
+
+  def position(player)
+    player_doc(player).css("div.player-header--vitals").css("ul").css("li")[0].text
+  end
+
+  def bats_and_throws(player)
+    player_doc(player).css("div.player-header--vitals").css("ul").css("li")[1].text
+  end
+
+  def height_weight(player)
+    player_doc(player).css("div.player-header--vitals").css("ul").css("li.player-header--vitals-height").text
+  end
+
+  def age(player)
+    player_doc(player).css("div.player-header--vitals").css("ul").css("li.player-header--vitals-age").text
   end
 
 end

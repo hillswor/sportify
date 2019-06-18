@@ -1,3 +1,5 @@
+require "pry"
+
 class Sportify::CLI
 
   def initialize
@@ -63,9 +65,41 @@ class Sportify::CLI
   end
 
   def active_roster_display(team)
-    @mlb.roster(team).each do |player|
-      puts "#{player[:player_number]} #{player[:player_name]}"
+    @mlb.roster(team).each_with_index do |player, index|
+      puts "#{index + 1}) #{player[:player_name]}"
     end
+    player_selector(team)
+  end
+
+  def player_selector(team)
+    puts ""
+    puts "Please input the number next to the player you would like information on or type menu to return to team menu"
+    puts ""
+    input = gets.strip
+    puts ""
+    if input.to_i.between?(1, @mlb.roster(team).length)
+      player_display(@mlb.roster(team)[input.to_i - 1])
+    elsif input.downcase == "menu"
+      team_menu(team)
+    else
+      puts "Invalid input.  Please try again."
+      player_selector(team)
+    end
+  end
+
+  def player_display(player)
+    player = @mlb.player_builder(player)
+    puts "You've selected #{player[:name]}"
+    puts ""
+    puts "Jersey Number: #{player[:number]}"
+    puts ""
+    puts "Position: #{player[:position]}"
+    puts ""
+    puts "#{player[:bats_and_throws]}"
+    puts ""
+    puts "Height/Weight: #{player[:height_weight]}"
+    puts ""
+    puts "#{player[:age]}"
   end
 
 end

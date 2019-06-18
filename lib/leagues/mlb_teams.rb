@@ -9,8 +9,18 @@ class Sportify::MLBteams
   end
 
   def roster(team)
-     @scraper.player_numbers(team).zip(@scraper.player_names(team)).map { |player_number, player_name| {player_number: player_number, player_name: player_name}}
+     @scraper.player_names(team).zip(@scraper.player_urls(team)).map { |player_name, player_url| {player_name: player_name, player_url: player_url}}
   end
 
+  def player_builder(player)
+    {
+      name: @scraper.name(player),
+      number: @scraper.number(player),
+      position: @scraper.position(player),
+      bats_and_throws: @scraper.bats_and_throws(player),
+      height_weight: @scraper.height_weight(player),
+      age: @scraper.age(player)
+    }
+  end
 
 end
