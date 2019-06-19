@@ -1,3 +1,5 @@
+require 'pry'
+
 class Sportify::MLBteams
 
   def initialize
@@ -9,7 +11,7 @@ class Sportify::MLBteams
   end
 
   def roster(team)
-     @scraper.player_names(team).zip(@scraper.player_urls(team)).map { |player_name, player_url| {player_name: player_name, player_url: player_url}}
+    @scraper.roster(team).zip(@scraper.player_urls(team)).map { |name, player_url| {name: name, player_url: player_url}}
   end
 
   def player_builder(player)

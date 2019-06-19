@@ -1,5 +1,3 @@
-require "pry"
-
 class Sportify::CLI
 
   def initialize
@@ -53,7 +51,6 @@ class Sportify::CLI
       puts "***** Active Roster *****"
       puts ""
       active_roster_display(team)
-      team_menu(team)
     when 2
       Sportify::CLI.new
     when 3
@@ -66,7 +63,7 @@ class Sportify::CLI
 
   def active_roster_display(team)
     @mlb.roster(team).each_with_index do |player, index|
-      puts "#{index + 1}) #{player[:player_name]}"
+      puts "#{index + 1}) #{player[:name]}"
     end
     player_selector(team)
   end
@@ -79,6 +76,7 @@ class Sportify::CLI
     puts ""
     if input.to_i.between?(1, @mlb.roster(team).length)
       player_display(@mlb.roster(team)[input.to_i - 1])
+      team_menu(team)
     elsif input.downcase == "menu"
       team_menu(team)
     else

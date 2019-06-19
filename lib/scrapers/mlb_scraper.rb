@@ -20,36 +20,24 @@ class Sportify::MLBscraper
     team_urls
   end
 
-  def roster_url(team_url)
-    html = open(team_url)
-    doc = Nokogiri::HTML(html)
-    if team_url == "https://www.mlb.com/reds" || team_url == "https://www.mlb.com/dodgers" || team_url == "https://www.mlb.com/giants"
-      roster_url = doc.css("div.megamenu-navbar").css("a.megamenu-static-navbar__menu-item.megamenu-static-navbar__menu-item--roster").attribute("href").value
-    else
-      roster_url = doc.css("div.megamenu-navbar").css("a.megamenu-static-navbar__menu-item.megamenu-static-navbar__menu-item--team").attribute("href").value
-    end
-    roster_url
-  end
-
   def roster_doc(team)
-    html = open(team[:team_url])
-    Nokogiri::HTML(html)
-  end
-
-  def player_numbers(team)
-    player_numbers = []
-    roster_doc(team).css("table.data.roster_table").css("td.dg-jersey_number").each do |player|
-      player_numbers << player.text
+    team_html = open(team[:team_url])
+    team_doc = Nokogiri::HTML(team_html)
+    if team[:team_url] == "https://www.mlb.com/reds" || team[:team_url] == "https://www.mlb.com/dodgers" || team[:team_url] == "https://www.mlb.com/giants"
+      roster_url = team_doc.css("div.megamenu-navbar").css("a.megamenu-static-navbar__menu-item.megamenu-static-navbar__menu-item--roster").attribute("href").value
+    else
+      roster_url = team_doc.css("div.megamenu-navbar").css("a.megamenu-static-navbar__menu-item.megamenu-static-navbar__menu-item--team").attribute("href").value
     end
-    player_numbers
+    roster_html = open(roster_url)
+    Nokogiri::HTML(roster_html)
   end
 
-  def player_names(team)
-    player_names = []
+  def roster(team)
+    roster = []
     roster_doc(team).css("td.dg-name_display_first_last").css("a").each do |player|
-      player_names << player.text
+      roster << player.text
     end
-    player_names
+    roster
   end
 
   def player_urls(team)
